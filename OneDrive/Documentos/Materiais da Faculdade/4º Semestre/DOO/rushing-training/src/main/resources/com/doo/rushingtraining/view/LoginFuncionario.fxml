@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="670.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.doo.rushingtraining.controller.LoginFuncionarioController">
+   <children>
+      <Label layoutX="69.0" layoutY="29.0" text="Rushing Training">
+         <font>
+            <Font name="System Bold Italic" size="29.0" />
+         </font>
+      </Label>
+      <Label layoutX="164.0" layoutY="142.0" text="CPF:">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <TextField fx:id="tfCPF" layoutX="59.0" layoutY="198.0" prefHeight="43.0" prefWidth="254.0">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </TextField>
+      <Label layoutX="154.0" layoutY="275.0" text="Senha:">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnLogin" layoutX="132.0" layoutY="414.0" mnemonicParsing="false" onAction="#login" prefHeight="46.0" prefWidth="106.0" text="Entrar">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Button>
+      <Label layoutX="93.0" layoutY="80.0" text="App Funcionário">
+         <font>
+            <Font name="System Bold" size="24.0" />
+         </font>
+      </Label>
+      <PasswordField fx:id="pfSenha" layoutX="59.0" layoutY="323.0" prefHeight="43.0" prefWidth="254.0" />
+   </children>
+</AnchorPane>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="670.0" prefWidth="370.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.doo.rushingtraining.controller.TreinoController">
+   <children>
+      <Label layoutX="25.0" layoutY="27.0" prefHeight="32.0" prefWidth="326.0" text="Vinculando Treino ao Aluno" textAlignment="CENTER" AnchorPane.leftAnchor="25.0">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font>
+      </Label>
+      <TableView fx:id="tbExercicios" layoutX="20.0" layoutY="80.0" prefHeight="517.0" prefWidth="333.0">
+         <columns>
+            <TableColumn fx:id="clmnTreino" prefWidth="332.0" text="Treino" />
+         </columns>
+      </TableView>
+      <Button fx:id="btnVinculaTreino" layoutX="23.0" layoutY="616.0" mnemonicParsing="false" onAction="#vincular" prefHeight="46.0" prefWidth="220.0" text="Vincular ao Aluno" textAlignment="CENTER" wrapText="true" />
+      <Button fx:id="btnSair" layoutX="255.0" layoutY="616.0" mnemonicParsing="false" onAction="#sair" prefHeight="46.0" prefWidth="95.0" text="Sair" />
+   </children>
+</AnchorPane>

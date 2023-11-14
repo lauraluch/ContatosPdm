@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1057867893644",
+    "project_id": "contatospdmlauraluch",
+    "storage_bucket": "contatospdmlauraluch.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057867893644:android:87e3161d47f1f033a9e4a9",
+        "android_client_info": {
+          "package_name": "com.laura.contatospdm"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG8_aEbw0WAZkZ0THGDMDnj8ihD3Qn4Xc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

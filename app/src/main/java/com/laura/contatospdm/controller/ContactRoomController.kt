@@ -1,7 +1,9 @@
 package com.laura.contatospdm.controller
 
 import android.os.AsyncTask
+import android.os.Message
 import androidx.room.Room
+import com.laura.contatospdm.model.Constant.CONTACT_ARRAY
 import com.laura.contatospdm.model.Contact
 import com.laura.contatospdm.model.ContactRoomDao
 import com.laura.contatospdm.model.ContactRoomDao.Companion.CONTACT_DATABASE_FILE
@@ -27,18 +29,19 @@ class ContactRoomController(private val mainActivity: MainActivity) {
     fun getContact(id: Int) = contactDaoImpl.retrieveContact(id)
 
     fun getContacts() {
-        object: AsyncTask<Unit, Unit, MutableList<Contact>>(){
-            override fun doInBackground(vararg params: Unit?): MutableList<Contact> {
-                return contactDaoImpl.retrieveContacts()
+        Thread {
+            val returnList = contactDaoImpl.retrieveContacts()
+
+            mainActivity.updateContactListHandler.apply {
+                sendMessage(Message().apply {
+                    data.putParcelableArray(
+                        CONTACT_ARRAY,
+                        returnList.toTypedArray()
+                    )
+                })
             }
 
-            override fun onPostExecute(result: MutableList<Contact>?) {
-                super.onPostExecute(result)
-                result?.also {
-                    mainActivity.updateContactList(result)
-                }
-            }
-        }.execute()
+        }.start()
     }
 
     fun editContact(contact: Contact){

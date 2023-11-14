@@ -3,6 +3,9 @@ package com.laura.contatospdm.view
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.view.ContextMenu
 import android.view.Menu
 import android.view.MenuItem
@@ -18,11 +21,13 @@ import com.laura.contatospdm.adapter.ContactAdapter
 import com.laura.contatospdm.controller.ContactController
 import com.laura.contatospdm.controller.ContactRoomController
 import com.laura.contatospdm.databinding.ActivityMainBinding
+import com.laura.contatospdm.model.Constant.CONTACT_ARRAY
 import com.laura.contatospdm.model.Constant.EXTRA_CONTACT
 import com.laura.contatospdm.model.Constant.VIEW_CONTACT
 import com.laura.contatospdm.model.Contact
 
 class MainActivity : AppCompatActivity() {
+    //ViewBinding
     private val amb: ActivityMainBinding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -34,7 +39,6 @@ class MainActivity : AppCompatActivity() {
     private val contactController: ContactRoomController by lazy {
         ContactRoomController(this)
     }
-
     //Adapter
     private val contactAdapter: ContactAdapter by lazy {
         ContactAdapter(
@@ -42,6 +46,23 @@ class MainActivity : AppCompatActivity() {
             contactList
         )
     }
+
+    // Handler -> implementa eventos discretos - recebe mensagem com tempo para processá-los || analogia com o caixa de supermercado
+    val updateContactListHandler = object : Handler(Looper.getMainLooper()) {
+        override fun handleMessage(msg: Message) {
+            super.handleMessage(msg)
+            msg.data.getParcelableArray(CONTACT_ARRAY)?.also { contactArray ->
+
+                contactList.clear()
+                contactArray.forEach {
+                    contactList.add(it as Contact)
+                }
+
+                contactAdapter.notifyDataSetChanged()
+            }
+        }
+    }
+
 
     //ARL
     private lateinit var carl: ActivityResultLauncher<Intent>
@@ -69,7 +90,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        amb.contatosLv.setOnItemClickListener{ parent, view, position, id ->
+        amb.contatosLv.setOnItemClickListener{ parent, view, position, id->
             val contact = contactList[position]
             val viewContactIntent = Intent(this, ContactActivity::class.java)
                 .putExtra(EXTRA_CONTACT, contact)
@@ -130,11 +151,5 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterForContextMenu(amb.contatosLv)
-    }
-
-    fun updateContactList(_contactList: MutableList<Contact>){
-        contactList.clear()
-        contactList.addAll(_contactList)
-        contactAdapter.notifyDataSetChanged()
     }
 }

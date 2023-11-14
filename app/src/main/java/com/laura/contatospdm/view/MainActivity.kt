@@ -17,6 +17,7 @@ import com.laura.contatospdm.R
 import com.laura.contatospdm.adapter.ContactAdapter
 import com.laura.contatospdm.databinding.ActivityMainBinding
 import com.laura.contatospdm.model.Constant.EXTRA_CONTACT
+import com.laura.contatospdm.model.Constant.VIEW_CONTACT
 import com.laura.contatospdm.model.Contact
 
 class MainActivity : AppCompatActivity() {
@@ -66,6 +67,14 @@ class MainActivity : AppCompatActivity() {
                 }
 
             }
+
+        amb.contatosLv.setOnItemClickListener{parent,view, position,id->
+            val contact = contactList[position]
+            val viewContactIntent = Intent(this, ContactActivity::class.java)
+            viewContactIntent.putExtra(EXTRA_CONTACT, contact)
+            viewContactIntent.putExtra(VIEW_CONTACT,true)
+            startActivity(viewContactIntent)
+        }
 
         registerForContextMenu(amb.contatosLv)
 

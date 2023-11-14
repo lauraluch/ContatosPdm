@@ -15,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.laura.contatospdm.R
 import com.laura.contatospdm.adapter.ContactAdapter
+import com.laura.contatospdm.controller.ContactController
 import com.laura.contatospdm.databinding.ActivityMainBinding
 import com.laura.contatospdm.model.Constant.EXTRA_CONTACT
 import com.laura.contatospdm.model.Constant.VIEW_CONTACT
@@ -26,7 +27,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Data source
-    private val contactList: MutableList<Contact> = mutableListOf()
+    private val contactList: MutableList<Contact> by lazy {
+        contactController.getContacts()
+    }
+
+    // Controller
+    private val contactController: ContactController by lazy {
+        ContactController(this)
+    }
 
     // Adapter
     private val contactAdapter: ContactAdapter by lazy {
@@ -42,7 +50,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(amb.root)
-        fillContacts()
 
         setSupportActionBar(amb.toolbarIn.toolbar)
         supportActionBar?.subtitle = "Contact list"
@@ -58,21 +65,32 @@ class MainActivity : AppCompatActivity() {
                         if (contactList.any{ it.id == _contact.id }) {
                             val position = contactList.indexOfFirst {  it.id == _contact.id  }
                             contactList[position] = _contact
+                            contactController.editContact(_contact)
                         }
                         else {
-                            contactList.add(_contact)
+                            val newId = contactController.insertContact(_contact)
+                            val newContact = Contact (
+                                newId,
+                                _contact.name,
+                                _contact.address,
+                                _contact.phone,
+                                _contact.email
+                            )
+                            contactList.add(newContact)
                         }
+                        contactList.sortBy { it.name }
                         contactAdapter.notifyDataSetChanged()
                     }
                 }
 
             }
 
-        amb.contatosLv.setOnItemClickListener{parent,view, position,id->
+        amb.contatosLv.setOnItemClickListener{parent,view, position,id ->
             val contact = contactList[position]
             val viewContactIntent = Intent(this, ContactActivity::class.java)
-            viewContactIntent.putExtra(EXTRA_CONTACT, contact)
-            viewContactIntent.putExtra(VIEW_CONTACT,true)
+                .putExtra(EXTRA_CONTACT, contact)
+                .putExtra(VIEW_CONTACT,true)
+
             startActivity(viewContactIntent)
         }
 
@@ -107,17 +125,20 @@ class MainActivity : AppCompatActivity() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         val position = (item.menuInfo as AdapterContextMenuInfo).position
+        val contact = contactList[position]
+
         return when (item.itemId) {
             R.id.removeContactMi -> {
+                contactController.removeContact(contact.id)
                 contactList.removeAt(position)
                 contactAdapter.notifyDataSetChanged()
                 Toast.makeText(this, "Contact removed.", Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.editContactMi -> {
-                val contact = contactList[position]
+                val contactToEdit = contactList[position]
                 val editContactIntent = Intent(this, ContactActivity::class.java)
-                editContactIntent.putExtra(EXTRA_CONTACT, contact)
+                editContactIntent.putExtra(EXTRA_CONTACT, contactToEdit)
                 contactActivityResultLauncher.launch(editContactIntent)
                 true
             }

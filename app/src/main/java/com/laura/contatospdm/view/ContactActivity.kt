@@ -49,7 +49,7 @@ class ContactActivity : AppCompatActivity() {
         with(acb) {
             saveBt.setOnClickListener {
                 val contact = Contact(
-                    id = receivedContact?.id,
+                    id = receivedContact?.id?: generateId(),
                     name = nameEt.text.toString(),
                     address = addressEt.text.toString(),
                     phone = phoneEt.text.toString(),
@@ -64,4 +64,5 @@ class ContactActivity : AppCompatActivity() {
         }
     }
 
+    private fun generateId() = Random(System.currentTimeMillis()).nextInt()
 }

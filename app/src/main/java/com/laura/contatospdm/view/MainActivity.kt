@@ -1,5 +1,6 @@
 package com.laura.contatospdm.view
 
+import android.adservices.topics.GetTopicsRequest
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -20,6 +21,7 @@ import com.laura.contatospdm.R
 import com.laura.contatospdm.adapter.ContactAdapter
 import com.laura.contatospdm.controller.ContactController
 import com.laura.contatospdm.controller.ContactRoomController
+import com.laura.contatospdm.controller.ContactRtDbFbController
 import com.laura.contatospdm.databinding.ActivityMainBinding
 import com.laura.contatospdm.model.Constant.CONTACT_ARRAY
 import com.laura.contatospdm.model.Constant.EXTRA_CONTACT
@@ -36,9 +38,10 @@ class MainActivity : AppCompatActivity() {
     private val contactList: MutableList<Contact> = mutableListOf()
 
     // Controller
-    private val contactController: ContactRoomController by lazy {
-        ContactRoomController(this)
+    private val contactController: ContactRtDbFbController by lazy {
+        ContactRtDbFbController(this)
     }
+
     //Adapter
     private val contactAdapter: ContactAdapter by lazy {
         ContactAdapter(
@@ -47,19 +50,39 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
+    companion object {
+        const val GET_CONTACTS_MSG = 1
+        const val GET_CONTACTS_INTERVAL = 2000L
+    }
+
     // Handler -> implementa eventos discretos - recebe mensagem com tempo para processá-los || analogia com o caixa de supermercado
     val updateContactListHandler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             super.handleMessage(msg)
-            msg.data.getParcelableArray(CONTACT_ARRAY)?.also { contactArray ->
 
-                contactList.clear()
-                contactArray.forEach {
-                    contactList.add(it as Contact)
-                }
+            // Busca contatos ou atualiza a lista de acordo com o tipo da mensagem
 
-                contactAdapter.notifyDataSetChanged()
+            if (msg.what == GET_CONTACTS_MSG) {
+
+                // Busca de acordo com o intervalo e agenda uma nova busca
+                contactController.getContacts()
+                sendMessageDelayed(
+                    obtainMessage().apply { what = GET_CONTACTS_MSG },
+                    GET_CONTACTS_INTERVAL
+                )
             }
+            else {
+                msg.data.getParcelableArray(CONTACT_ARRAY)?.also { contactArray ->
+
+                    contactList.clear()
+                    contactArray.forEach {
+                        contactList.add(it as Contact)
+                    }
+
+                    contactAdapter.notifyDataSetChanged()
+                }
+            }
+
         }
     }
 
@@ -100,7 +123,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         registerForContextMenu(amb.contatosLv)
-        contactController.getContacts()
+        updateContactListHandler.apply {
+            sendMessageDelayed(
+                obtainMessage().apply { what = GET_CONTACTS_MSG },
+                GET_CONTACTS_INTERVAL
+            )
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
